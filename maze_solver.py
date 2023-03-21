@@ -59,7 +59,7 @@ def draw_maze(maze, seen, happy_path=None):
     print(chr(27) + "[2J")
     print("\u001b[0;0H")
     print("\n".join(maze))
-    time.sleep(0.01)
+    time.sleep(0.005)
 
 
 def solve(raw_maze):

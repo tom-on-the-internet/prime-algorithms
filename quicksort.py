@@ -1,4 +1,9 @@
-my_array = [1, 2, 2, 1, 5]
+my_array = [
+    13723,
+    13685,
+    20064,
+    17547,
+]
 
 
 def partition(nums: list[int], lo: int, hi: int) -> int:
