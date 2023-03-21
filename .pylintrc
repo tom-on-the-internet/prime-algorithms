@@ -421,6 +421,8 @@ disable=raw-checker-failed,
         missing-module-docstring,
         unspecified-encoding,
         missing-function-docstring,
+        missing-class-docstring,
+        too-few-public-methods,
         consider-using-with
 
 # Enable the message, report, category or checker with the given id(s). You can
