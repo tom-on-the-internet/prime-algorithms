@@ -9,8 +9,8 @@ class Node:
 
 
 class Queue:
-    head = None
-    tail = None
+    head: Node | None = None
+    tail: Node | None = None
     length = 0
 
     def enqueue(self, item):

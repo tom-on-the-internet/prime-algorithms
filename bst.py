@@ -67,7 +67,6 @@ res = find(a, 5)
 print(res)
 
 insert(a, 19)
-node = e
 for node in [a, b, c, d, e, f, g, h, i]:
     print(f"My value is {node.value}")
     if node.left:
