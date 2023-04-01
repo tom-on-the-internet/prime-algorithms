@@ -1,7 +1,5 @@
 from __future__ import annotations
 
-# TODO: Redo this someday.
-
 
 class Node:
     def __init__(self, key: int, value: int) -> None:
@@ -19,34 +17,16 @@ class LRUCache:
         self.length = 0
         self.lookup = {}
 
-    def add(self, key: int, value: int) -> None:
-        node = Node(key, value)
-        prev_head = self.head
-
-        self.head = node
-        self.head.prev = prev_head
-
-        if prev_head:
-            prev_head.next = self.head
-
-        if not self.tail:
-            self.tail = node
-
-        # handle if the key already exists
+    def set(self, key: int, value: int) -> None:
         if key in self.lookup:
-            self.remove_node(self.lookup[key])
-            self.lookup[key] = node
-            return
+            self.delete(self.lookup[key])
 
-        self.lookup[key] = node
+        node = Node(key, value)
 
-        if self.length < self.capacity:
-            self.length += 1
-            return
+        self.add(node)
 
-        self.remove_node(self.tail)
-
-        self.tail = self.tail.next
+        if self.length > self.capacity:
+            self.delete(self.tail)
 
     def get(self, key: int) -> int:
         if key not in self.lookup:
@@ -54,61 +34,70 @@ class LRUCache:
 
         node = self.lookup[key]
 
-        if node is self.head:
-            return node.value
-
-        prev_head = self.head
-
-        next_node = node.next
-
-        prev_node = node.prev
-
-        if prev_node:
-            prev_node.next = next_node
-
-        if next_node:
-            next_node.prev = prev_node
-
-        self.head = node
-
-        self.head.prev = prev_head
-
-        if prev_head:
-            prev_head.next = self.head
-            if prev_head.prev is self.head:
-                prev_head.prev = None
+        self.delete(node)
+        self.add(node)
 
         return node.value
 
-    def remove_node(self, node):
-        if not node:
+    def remove(self, key: int) -> None:
+        if key not in self.lookup:
+            return
+
+        self.delete(self.lookup[key])
+
+    def add(self, node: Node) -> None:
+        self.length += 1
+        self.lookup[node.key] = node
+        if not self.head:
+            self.head = node
+            self.tail = node
+            return
+
+        curr_head = self.head
+        curr_head.next = node
+        node.prev = curr_head
+        self.head = node
+
+    def delete(self, node: Node) -> None:
+        self.length -= 1
+        del self.lookup[node.key]
+
+        if node is self.head and node is self.tail:
+            self.head = None
+            self.tail = None
+            return
+
+        if node is self.head:
+            self.head = self.head.prev
+            self.head.next = None
+            return
+
+        if node is self.tail:
+            self.tail = self.tail.next
+            self.tail.prev = None
             return
 
         prev_node = node.prev
         next_node = node.next
 
-        if prev_node:
-            prev_node.next = next_node
-
-        if next_node:
-            next_node.prev = prev_node
-
-        del self.lookup[node.key]
-        print("removed " + str(node.key))
+        prev_node.next = next_node
+        next_node.prev = prev_node
 
 
 lru = LRUCache(3)
 
-lru.add(8, 8)  # 8
-lru.add(7, 7)  # 7,8
-lru.add(3, 3)  # 3,7,8
-lru.get(7)  # 7,3,8
-lru.add(7, 7)  # 7,3,8
-lru.add(4, 4)  # 4,7,3
-lru.add(3, 3)  # 3,4,7
-lru.add(2, 2)
-lru.add(5, 5)
-lru.add(6, 6)
+lru.set(8, 8)
+lru.remove(8)
+lru.set(7, 7)
+lru.set(3, 3)
+lru.get(7)
+lru.set(7, 7)
+lru.set(4, 4)
+lru.set(3, 3)
+lru.set(2, 2)
+lru.set(5, 5)
+lru.remove(3)
+lru.set(6, 6)
 
 print(lru.length)
 print("-")
@@ -120,4 +109,5 @@ if lru.head:
         my_head = my_head.prev
         print(my_head.value)
 print("-")
+print(lru.head.key)
 print(lru.tail.key)
